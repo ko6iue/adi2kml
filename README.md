@@ -7,7 +7,7 @@ Most loggers and sites like [QRZ](https://www.qrz.com/) support ADIF file export
 
 ## Demo
 
-You can run a quick demo in three easy steps.
+You can run a quick demo in three easy steps.  No installation required.
 
 1. Download the [sample.kml](https://raw.githubusercontent.com/ko6iue/adi2kml/refs/heads/main/sample.kml) I generated using QSOs over the last six months.
 2. Visit the [Google Earth](https://earth.google.com/) web site.
