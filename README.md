@@ -54,7 +54,7 @@ $ ./adi2kml JK42GO input.adi output.kml
 
 ## Performance
 
-The scheme script is able to process about 2291 QSOs per second.
+The scheme script is able to process about 2000 QSOs per second.
 
 ```
 $ time ./adi2kml.scm JK42NO ../chicken/archive/sample.adi sample.kml
@@ -65,7 +65,7 @@ user    0m0.539s
 sys     0m0.013s
 ```
 
-The compiled binary is able to process about 3191 QSOs per second.
+The compiled binary is able to process about 3000 QSOs per second.
 
 ```
 $ time ./adi2kml JK42NO ../chicken/archive/sample.adi sample.kml
