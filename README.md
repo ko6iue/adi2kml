@@ -21,7 +21,7 @@ You do **not** need to login to Google to use this program.
 
 ![Google Earth Screenshot showing QSOs and popup](screenshot.png)
 
-Navigate the earth with your mouse.  As shown above, if you click on a QSO pin, a popup will show the stations QRZ page link, QTH, maidenhead grid, country, distance from your QTH, GPS coordinates, and bearing in degrees.
+Navigate the earth with your mouse.  As shown above, if you click on a QSO pin, a popup will show the ooperator's name, QRZ page link, QTH, maidenhead grid, country, distance from your QTH, GPS coordinates, and bearing in degrees.
 
 ## Running adi2kml
 
