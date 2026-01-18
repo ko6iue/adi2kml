@@ -30,6 +30,13 @@ You will need to install [CHICKEN scheme](https://www.call-cc.org/) and then use
 
 CHICKEN scheme runs on [a number of different platforms](https://wiki.call-cc.org/portability) so `adi2kml` should run on your favorite (or semi-favorite) OS. I've only tested it on Linux.
 
+Clone this github repo by running:
+
+```
+$ git clone https://github.com/ko6iue/adi2kml.git
+$ cd ./adi2kml
+```
+
 You can run `adi2kml` two ways: scheme script or compiled C binary.
 
 To run the script, use a commandline like the following:
@@ -82,9 +89,11 @@ Both the script and binary version of the program use very little memory. The `a
 
 ## Maidenhead Calculations
 
-The `adi2kml.scm` script loads the `maidenhead.scm` file in order to convert maidenhead coordinates to GPS and calculate bearing and distance between to maidenhead locators.
+The `adi2kml.scm` script loads the `maidenhead.scm` file in order to have methods for converting maidenhead coordinates to GPS and calculating bearing and distance between two maidenhead locators.
 
 All GPS coordinates, bearing, and distances are calculated and do not rely on that information being present in the ADIF file.
+
+The maidenhead grid square you provide on the `adi2kml` commandline is used in these calculations.
 
 ## Limitations and TODOs
 
