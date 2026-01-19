@@ -178,10 +178,10 @@ gridsquare: ~A
       (cadr args)
       (caddr args))
     (begin
-      (format #t "Invalid arguments: ~A\n\n" args)
-      (display "Use the following command-line:\n\n")
-      (display "$ ./adi2kml.scm <your maidenhead grid> <adi file> <kml file>\n\n")
-      (display "e.g. ./ad2kml.scm DM45NM mylog.adi myworld.kml\n\n")
+      (format #t "\nERROR invalid arguments: ~A\n\n" args)
+      (display "adi2kml reads ADIF files and writes KML files\n\n")
+      (display "  Usage: ./adi2kml.scm <your maidenhead grid> <adi file> <kml file>\n")
+      (display "Example: ./ad2kml.scm DM45NM mylog.adi myworld.kml\n\n")
       #f)))
 
 (adi2kml-args (command-line-arguments))
