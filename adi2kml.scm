@@ -88,7 +88,7 @@ gridsquare: ~A
 (define (kml-record-write port my-gridsquare adi-record)
   (let ((coord (maidenhead-to-gps-center
                 (qso-gridsquare adi-record))))
-    (if coord
+    (if (null? coord) '()
       (let ((lat (car coord))
             (lon (cadr coord)))
         (serialize-sxml
@@ -108,8 +108,7 @@ gridsquare: ~A
           output:
           port
           cdata-section-elements:
-          '(description)))
-      #f)))
+          '(description))))))
 
 (define (kml-footer-write port)
   (format port "\n</Document>\n</kml>\n"))
@@ -133,7 +132,11 @@ gridsquare: ~A
   (let ((callsign (qso-callsign record)))
     (if (not (member callsign processed-callsigns))
       (begin
-        (when (kml-record-write kml-port my-gridsquare record)
+        (when (not (null?
+                    (kml-record-write
+                      kml-port
+                      my-gridsquare
+                      record)))
           (set! processed-callsigns
             (cons callsign processed-callsigns)))))))
 

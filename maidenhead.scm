@@ -30,81 +30,89 @@
 ; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(import
-  (regex)
-  (srfi-1)) ; filter
+(import abnf
+  lexgen
+  srfi-1)
 
-; regular expression for parsing maidenhead coordinates
-(define mh-regex
-  (regexp
-    (string-append
-      "^([a-rA-R]{2})([0-9]{2})?|"
-      "^([a-rA-R]{2})([0-9]{2})([a-xA-X]{2})([0-9]{2})?$")))
+(define (make-maidenhead-lexer-closure)
+  ;; closure to capture ABNF definitions for
+  ;; a maidenhead designation
+  (let* ((field-chars (repetition-n 2 (alternatives
+                                       (range #\A #\R)
+                                       (range #\a #\r))))
+         (square-chars (repetition-n 2 decimal))
+         (subsquare-chars (repetition-n 2 (alternatives
+                                           (range #\A #\X)
+                                           (range #\a #\x))))
+         (extended-chars square-chars)
+         (between-wsp (lambda (p)
+                       (concatenation
+                         (drop-consumed (optional-sequence wsp))
+                         p
+                         (drop-consumed (optional-sequence wsp)))))
+         (maidenhead (between-wsp
+                      (concatenation
+                        field-chars
+                        (optional-sequence
+                          (concatenation
+                            square-chars
+                            (optional-sequence
+                              (concatenation
+                                subsquare-chars
+                                (optional-sequence
+                                  extended-chars)))))))))
+    (lambda (text)
+      (let ((parsed (lex maidenhead identity text)))
+        (cond
+          ((null? (cadr parsed)) (car parsed))
+          (else '()))))))
 
-(define (maidenhead-to-gps text)
-  ; input: maidenhead text coordinates
-  ; returns ((lat lon) (lat-width lon-width))
-  (let* ((mh-pairs (string-match mh-regex text))
+(define (make-maidenhead-calculations-closure)
+  (let* ((mh-lexer (make-maidenhead-lexer-closure))
          (ci char->integer)
-         (char->step
-           (lambda (char)
-             (cond ; #\a > #\A > #\0 in unicode
-               ((>= (ci char) (ci #\a))
-                 (- (ci char) (ci #\a)))
-               ((>= (ci char) (ci #\A))
-                 (- (ci char) (ci #\A)))
-               ((>= (ci char) (ci #\0))
-                 (- (ci char) (ci #\0))))))
-         (mh-pair->steps
-           (lambda (mh-pair)
-             (map char->step
-               (string->list mh-pair))))
-         (steps
-           (if mh-pairs
-             (map mh-pair->steps
-               (filter identity
-                 (cdr mh-pairs)))
-             #f))
-         (sw-corner-lat -90)
-         (sw-corner-lon -180)
-         (update-corner
-           (lambda (steps widths)
-             (set! sw-corner-lat
-               (+ sw-corner-lat
-                 (*
-                   (cadr steps)
-                   (car widths))))
-             (set! sw-corner-lon
-               (+ sw-corner-lon
-                 (*
-                   (car steps)
-                   (cadr widths))))))
-         (resolution-degrees
+         (char-to-step
+           (lambda (c)
+             (cond ; #\a > #\A > #\0 in unicode/ascii
+               ((>= (ci c) (ci #\a)) (- (ci c) (ci #\a)))
+               ((>= (ci c) (ci #\A)) (- (ci c) (ci #\A)))
+               ((>= (ci c) (ci #\0)) (- (ci c) (ci #\0))))))
+         (stepsize-degrees
            `((10 20) (1 2) (,(/ 2.5 60) ,(/ 5.0 60))
-             (,(/ 2.5 600) ,(/ 5.0 600)))))
-    (if steps
-      (begin
-        (do ((i 0 (add1 i)))
-          ((= i (length steps)))
-          (update-corner
-            (list-ref steps i)
-            (list-ref resolution-degrees i)))
-        (list (list sw-corner-lat sw-corner-lon)
-          (list-ref resolution-degrees
-            (- (length steps) 1))))
-      #f)))
+             (,(/ 2.5 600) ,(/ 5.0 600))))
+         (parse-mh
+           (lambda(text)
+             (map char-to-step (mh-lexer text)))))
+    (lambda (text)
+      (let ((sw-corner-lat -90)
+            (sw-corner-lon -180)
+            (steps (parse-mh text)))
+        (if (null? steps) '()
+          (let loop ((i 0)
+                     (steps steps))
+            (if (null? steps)
+              (list
+                (list sw-corner-lat sw-corner-lon)
+                (list-ref stepsize-degrees (- i 1)))
+              (let ((lonlat (take steps 2))
+                    (res (list-ref stepsize-degrees i)))
+                (set! sw-corner-lat
+                  (+ sw-corner-lat (*(cadr lonlat) (car res))))
+                (set! sw-corner-lon
+                  (+ sw-corner-lon (*(car lonlat) (cadr res))))
+                (loop (+ i 1) (drop steps 2))))))))))
+
+(define maidenhead-to-gps (make-maidenhead-calculations-closure))
 
 (define (maidenhead-to-gps-center text)
   (let ((coord (maidenhead-to-gps text)))
-    (if coord
+    (if (null? coord) '()
       (let ((lat (caar coord))
             (lon (cadar coord))
             (latscale (caadr coord))
             (lonscale (cadadr coord)))
         (list
           (exact->inexact (+ lat (/ latscale 2)))
-          (exact->inexact (+ lon (/ lonscale 2)))))
-      #f)))
+          (exact->inexact (+ lon (/ lonscale 2))))))))
 
 (define pi 3.1415926)
 

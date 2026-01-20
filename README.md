@@ -26,7 +26,7 @@ Navigate the earth with your mouse.  As shown above, if you click on a QSO pin, 
 ## Running adi2kml
 
 You will need to install [CHICKEN scheme](https://www.call-cc.org/) and then use
-`chicken-install` to install the necessary modules: `regex`, `regex-case`, `srfi-1`, `srfi-48`, `sxml-serializer`.
+`chicken-install` to install the necessary modules: `regex`, `regex-case`, `srfi-1`, `srfi-48`, `sxml-serializer`, `abnf`, `lexgen`.
 
 CHICKEN scheme runs on [a number of different platforms](https://wiki.call-cc.org/portability) so `adi2kml` should run on your favorite (or semi-favorite) OS. I've only tested it on Linux.
 

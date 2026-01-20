@@ -8,13 +8,13 @@
   ((current-test-epsilon 0.01))
   (test-group
     "Maidenhead to GPS"
-    (test #f
+    (test '()
       (maidenhead-to-gps "ZZ00"))
-    (test #f
+    (test '()
       (maidenhead-to-gps "DM4242"))
-    (test #f
+    (test '()
       (maidenhead-to-gps "DM42DM42DM"))
-    (test #f
+    (test '()
       (maidenhead-to-gps "00"))
     (test '((30 -120) (10 20))
       (maidenhead-to-gps "DM"))
