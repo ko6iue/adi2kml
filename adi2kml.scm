@@ -162,7 +162,7 @@ gridsquare: ~A
 
               (regex-case
                 line
-                ("<(.*):[0-9]+>(.*)"
+                ("<(.*):[0-9:]+>(.*)"
                   (all key value)
                   (update-adi-record record key value))
                 ("<eor>" _
