@@ -7,9 +7,13 @@ Most loggers and sites like [QRZ](https://www.qrz.com/) support ADIF file export
 
 ## Demo
 
-You can run a quick demo in three easy steps.  No installation required.
+You can view KML files inside [Google Earth](https://earth.google.com) as well as a number of other websites e.g. [KMZView](https://kmzview.com). Just search for "Sites to view KML" or something similar and you'll find dozens of sites.
 
-1. Download the [sample.kml](https://raw.githubusercontent.com/ko6iue/adi2kml/refs/heads/main/sample.kml) I generated using QSOs over the last six months.
+For example, you can view my [QSOs over the last 6 months on KMZView](https://kmzview.com/wOsP7oFdjUtxOPtJoGpK). The KML files that `adi2kml` generates include details like operator's name, QRZ page link, QTH, maidenhead grid, country, distance from your QTH, GPS coordinates, and bearing in degrees. You can view this information by clicking the markers on the map.
+
+You can run a Google Earth demo by:
+
+1. Download the [sample.kml](https://raw.githubusercontent.com/ko6iue/adi2kml/refs/heads/main/sample.kml) which was generated using `adi2kml`.
 2. Visit the [Google Earth](https://earth.google.com/) web site.
 3. Upload the KML file using the "Open local KML file" feature.
 
@@ -17,11 +21,9 @@ The web interface can look different based on your browswer and/or if you are lo
 
 If you see a menu bar, click the "File" menu and then choose `Open local KML file`. Some interfaces, just have an `Open local KML file` button.
 
-You don't need a Google account to use Google Earth and view KML files.
+You don't need a Google account to use Google Earth.
 
 ![Google Earth Screenshot showing QSOs and popup](screenshot.png)
-
-Navigate the earth with your mouse.  As shown above, if you click on a QSO pin, a popup will show the operator's name, QRZ page link, QTH, maidenhead grid, country, distance from your QTH, GPS coordinates, and bearing in degrees.
 
 ## Running adi2kml to build your own KML file
 
