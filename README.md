@@ -17,7 +17,7 @@ The web interface can look different based on your browswer and/or if you are lo
 
 If you see a menu bar, click the "File" menu and then choose `Open local KML file`. Some interfaces, just have an `Open local KML file` button.
 
-You do **not** need to login to Google to use this program.
+You don't need a Google account to use Google Earth and view KML files.
 
 ![Google Earth Screenshot showing QSOs and popup](screenshot.png)
 
