@@ -25,22 +25,43 @@
         (test (sprintf "\"~A\"" (cadr el)) (car el) (lexer (cadr el))))
       lexer-tests)))
 
+(define mh-to-gps
+  '((((30 -120) (10 20)) "DM")
+    (((38 -102) (1 2)) "DM98")
+    (((38.54 -101.75) (0.0416 0.0833)) "DM98dn")))
+
+(parameterize ((current-test-epsilon 0.01))
+  (test-group "maidenhead to gps"
+    (for-each
+      (lambda(el)
+        (let ((rval (maidenhead-to-gps (cadr el)))
+              (expect (car el)))
+          (test
+            (sprintf "lat: \"~A\"" (cadr el))
+            (caar expect)
+            (caar rval))
+          (test
+            (sprintf "lon: \"~A\"" (cadr el))
+            (cadar expect)
+            (cadar rval))
+          (test
+            (sprintf "latstep: \"~A\"" (cadr el))
+            (caadr expect)
+            (caadr rval))
+          (test
+            (sprintf "lonstep: \"~A\"" (cadr el))
+            (cadadr expect)
+            (cadadr rval))))
+      mh-to-gps)))
+
 (parameterize
   ((current-test-epsilon 0.01))
   (test-group
     "Maidenhead to GPS"
-    (test '((30 -120) (10 20))
-      (maidenhead-to-gps "DM"))
     (test '(35.0 -110.0)
       (maidenhead-to-gps-center "DM"))
-    (test '((38 -102) (1 2))
-      (maidenhead-to-gps "DM98"))
     (test '(38.5 -101.0)
       (maidenhead-to-gps-center "DM98"))
-    (test 38.54 (caar (maidenhead-to-gps "DM98dn")))
-    (test -101.75 (cadar (maidenhead-to-gps "DM98dn")))
-    (test 0.0416 (caadr (maidenhead-to-gps "DM98dn")))
-    (test 0.08333 (cadadr (maidenhead-to-gps "DM98dn")))
     (test 0.93007 (haversine 9.96))
     (test 19013.87 (car (maidenhead-distance-bearing "AA00AA00" "AR00AX09")))
     (test 0.0 (cadr (maidenhead-distance-bearing "AA00AA00" "AR00AX09")))))
