@@ -30,13 +30,7 @@
 ; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(module maidenhead
-  (maidenhead-to-gps maidenhead-to-gps-center maidenhead-distance-bearing
-    make-maidenhead-lexer-closure)
-
-(import scheme
-  (chicken base)
-  abnf
+(import abnf
   lexgen
   srfi-1)
 
@@ -172,4 +166,4 @@
          (bearing-final (if (< bearing 0)
                          (+ 360 bearing)
                          bearing)))
-    (list distance-km bearing-final))))
+    (list distance-km bearing-final)))

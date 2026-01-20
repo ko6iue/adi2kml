@@ -28,7 +28,6 @@
 ; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (load "maidenhead.scm")
-(import maidenhead)
 
 (import (scheme)
   (regex-case)
