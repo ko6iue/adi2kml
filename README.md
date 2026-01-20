@@ -23,7 +23,7 @@ You do **not** need to login to Google to use this program.
 
 Navigate the earth with your mouse.  As shown above, if you click on a QSO pin, a popup will show the operator's name, QRZ page link, QTH, maidenhead grid, country, distance from your QTH, GPS coordinates, and bearing in degrees.
 
-## Running adi2kml
+## Running adi2kml to build your own KML file
 
 You will need to install [CHICKEN scheme](https://www.call-cc.org/) and then use
 `chicken-install` to install the necessary modules: `regex`, `regex-case`, `srfi-1`, `srfi-48`, `sxml-serializer`, `abnf`, `lexgen`.
