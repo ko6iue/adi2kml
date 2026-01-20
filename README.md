@@ -9,17 +9,15 @@ Most loggers and sites like [QRZ](https://www.qrz.com/) support ADIF file export
 
 You can view KML files inside [Google Earth](https://earth.google.com) as well as a number of other websites e.g. [KMZView](https://kmzview.com). Just search for "Sites to view KML" or something similar and you'll find dozens of sites.
 
-For example, you can view my [QSOs over the last 6 months on KMZView](https://kmzview.com/wOsP7oFdjUtxOPtJoGpK). The KML files that `adi2kml` generates include details like operator's name, QRZ page link, QTH, maidenhead grid, country, distance from your QTH, GPS coordinates, and bearing in degrees. You can view this information by clicking the markers on the map.
+For example, you can view my [QSOs over the last 6 months on KMZView](https://kmzview.com/0MV2AIWkE8J3e67s7P8i). The KML files that `adi2kml` generates include details like operator's name, QRZ page link, QTH, maidenhead grid, country, distance from your QTH, GPS coordinates, and bearing in degrees. You can view this information by clicking the markers on the map. If you are not using an ad blocker, you may see ads at the bottom of the KMZView site.
 
-You can run a Google Earth demo by:
+You can run view the `sample.kml` file on Google Earth by:
 
-1. Download the [sample.kml](https://raw.githubusercontent.com/ko6iue/adi2kml/refs/heads/main/sample.kml) which was generated using `adi2kml`.
-2. Visit the [Google Earth](https://earth.google.com/) web site.
-3. Upload the KML file using the "Open local KML file" feature.
+1. Downloading the [sample.kml](https://raw.githubusercontent.com/ko6iue/adi2kml/refs/heads/main/sample.kml) which was generated using `adi2kml`.
+2. Visiting the [Google Earth](https://earth.google.com/) web site.
+3. Uploading the KML file using the "Open local KML file" feature.
 
-The web interface can look different based on your browswer and/or if you are logged into Google.
-
-If you see a menu bar, click the "File" menu and then choose `Open local KML file`. Some interfaces, just have an `Open local KML file` button.
+The Google Earth interface had multiple was to upload.  If you see a menu bar, click the "File" menu and then choose `Open local KML file`. Some interfaces, just have a large `Open local KML file` button.
 
 You don't need a Google account to use Google Earth.
 
