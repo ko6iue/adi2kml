@@ -83,7 +83,7 @@ user    0m0.382s
 sys     0m0.015s
 ```
 
-This was run on my laptop with a Intel i9-14900HX (32) @ 5.600GHz processor.
+This was run on my laptop with an Intel i9-14900HX (32) @ 5.600GHz processor.
 
 Both the script and binary version of the program use very little memory. The `adi2kml` program is designed to stream the ADIF directly to KML with as little intermediate data as possible.
 
