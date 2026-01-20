@@ -5202,12 +5202,12 @@
   <description><![CDATA[<h1>Qianrun Ge</h1>
 <a href="https://www.qrz.com/db/BG5JGG">QRZ Page</a><br/>
 <b>QTH</b>: JILIN, JILIN<br/>
-<b>Grid</b>: OL79<br/>
+<b>Grid</b>: OL79XQ<br/>
 <b>Country</b>: China<br/>
-<b>Distance</b>: 10432.15 km<br/>
-<b>Bearing</b>: 313.19&deg;]]></description>
+<b>Distance</b>: 10355.45 km<br/>
+<b>Bearing</b>: 312.68&deg;]]></description>
   <Point>
-    <coordinates>115.0,29.5,0</coordinates>
+    <coordinates>115.958333333333,29.6875,0</coordinates>
   </Point>
 </Placemark><Placemark>
   <name>BD8SN</name>
@@ -15204,6 +15204,174 @@
 <b>Bearing</b>: 354.32&deg;]]></description>
   <Point>
     <coordinates>-123.125,48.1041666666667,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>K0DCR</name>
+  <description><![CDATA[<h1>Dennis C Raphael</h1>
+<a href="https://www.qrz.com/db/K0DCR">QRZ Page</a><br/>
+<b>QTH</b>: COLO SPGS<br/>
+<b>Grid</b>: DM78OV<br/>
+<b>Country</b>: United States<br/>
+<b>Distance</b>: 1465.79 km<br/>
+<b>Bearing</b>: 83.25&deg;]]></description>
+  <Point>
+    <coordinates>-104.791666666667,38.8958333333333,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>JH0AHI</name>
+  <description><![CDATA[<h1>Akio Kondo</h1>
+<a href="https://www.qrz.com/db/JH0AHI">QRZ Page</a><br/>
+<b>QTH</b>: Kashiwazaki Niigata<br/>
+<b>Grid</b>: PM97gi<br/>
+<b>Country</b>: Japan<br/>
+<b>Distance</b>: 8246.15 km<br/>
+<b>Bearing</b>: 305.48&deg;]]></description>
+  <Point>
+    <coordinates>138.541666666667,37.3541666666667,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>JH1HIC</name>
+  <description><![CDATA[<h1>KATSUMI YAMADA</h1>
+<a href="https://www.qrz.com/db/JH1HIC">QRZ Page</a><br/>
+<b>QTH</b>: TAKASAKI-CITY GUMMA 370-3524<br/>
+<b>Grid</b>: PM96mi<br/>
+<b>Country</b>: Japan<br/>
+<b>Distance</b>: 8277.06 km<br/>
+<b>Bearing</b>: 304.40&deg;]]></description>
+  <Point>
+    <coordinates>139.041666666667,36.3541666666667,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>K5KVN</name>
+  <description><![CDATA[<h1>KEVIN A THORNTON</h1>
+<a href="https://www.qrz.com/db/K5KVN">QRZ Page</a><br/>
+<b>QTH</b>: Tontitown<br/>
+<b>Grid</b>: EM26VD<br/>
+<b>Country</b>: United States<br/>
+<b>Distance</b>: 2436.35 km<br/>
+<b>Bearing</b>: 87.74&deg;]]></description>
+  <Point>
+    <coordinates>-94.2083333333333,36.1458333333333,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>JA8OGL</name>
+  <description><![CDATA[<h1>Hiroyuki Sugimoto</h1>
+<a href="https://www.qrz.com/db/JA8OGL">QRZ Page</a><br/>
+<b>QTH</b>: Kita-ward, Sapporo-city, Hokkaido,<br/>
+<b>Grid</b>: QN03QC<br/>
+<b>Country</b>: Japan<br/>
+<b>Distance</b>: 7680.33 km<br/>
+<b>Bearing</b>: 309.10&deg;]]></description>
+  <Point>
+    <coordinates>141.375,43.1041666666667,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>KF0GQH</name>
+  <description><![CDATA[<h1>Lyle K "Kent" Allen</h1>
+<a href="https://www.qrz.com/db/KF0GQH">QRZ Page</a><br/>
+<b>QTH</b>: Grandview<br/>
+<b>Grid</b>: EM12JG<br/>
+<b>Country</b>: United States<br/>
+<b>Distance</b>: 2319.62 km<br/>
+<b>Bearing</b>: 100.05&deg;]]></description>
+  <Point>
+    <coordinates>-97.2083333333333,32.2708333333333,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>KF0LJM</name>
+  <description><![CDATA[<h1>MARIO P POPO</h1>
+<a href="https://www.qrz.com/db/KF0LJM">QRZ Page</a><br/>
+<b>QTH</b>: PARKER<br/>
+<b>Grid</b>: DM79OM<br/>
+<b>Country</b>: United States<br/>
+<b>Distance</b>: 1462.71 km<br/>
+<b>Bearing</b>: 80.51&deg;]]></description>
+  <Point>
+    <coordinates>-104.791666666667,39.5208333333333,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>JR3AKG</name>
+  <description><![CDATA[<h1>Takeshi Ishigami</h1>
+<a href="https://www.qrz.com/db/JR3AKG">QRZ Page</a><br/>
+<b>QTH</b>: Nishi-ku, Sakai-Ctiy, Osaka,<br/>
+<b>Grid</b>: PM74rn<br/>
+<b>Country</b>: Japan<br/>
+<b>Distance</b>: 8655.60 km<br/>
+<b>Bearing</b>: 304.78&deg;]]></description>
+  <Point>
+    <coordinates>135.458333333333,34.5625,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>KG5EYC</name>
+  <description><![CDATA[<h1>Ralph E Wynn</h1>
+<a href="https://www.qrz.com/db/KG5EYC">QRZ Page</a><br/>
+<b>QTH</b>: Hammon<br/>
+<b>Grid</b>: EM05HN<br/>
+<b>Country</b>: United States<br/>
+<b>Distance</b>: 2004.40 km<br/>
+<b>Bearing</b>: 92.65&deg;]]></description>
+  <Point>
+    <coordinates>-99.375,35.5625,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>JP1GUW</name>
+  <description><![CDATA[<h1>Satoshi "SHIBA" Shibasaki</h1>
+<a href="https://www.qrz.com/db/JP1GUW">QRZ Page</a><br/>
+<b>QTH</b>: Kawaguchi-City, Saitama<br/>
+<b>Grid</b>: PM95UT<br/>
+<b>Country</b>: Japan<br/>
+<b>Distance</b>: 8264.98 km<br/>
+<b>Bearing</b>: 303.61&deg;]]></description>
+  <Point>
+    <coordinates>139.708333333333,35.8125,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>W3UCA</name>
+  <description><![CDATA[<h1>TIMOTHY F "Tim" DAVIDSON</h1>
+<a href="https://www.qrz.com/db/W3UCA">QRZ Page</a><br/>
+<b>QTH</b>: Shartlesvile<br/>
+<b>Grid</b>: FN10WM<br/>
+<b>Country</b>: United States<br/>
+<b>Distance</b>: 3871.03 km<br/>
+<b>Bearing</b>: 72.00&deg;]]></description>
+  <Point>
+    <coordinates>-76.125,40.5208333333333,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>KA3ZLS</name>
+  <description><![CDATA[<h1>CHRISTOPHER S PEIGHTAL</h1>
+<a href="https://www.qrz.com/db/KA3ZLS">QRZ Page</a><br/>
+<b>QTH</b>: HARRINGTON<br/>
+<b>Grid</b>: FM28EW<br/>
+<b>Country</b>: United States<br/>
+<b>Distance</b>: 3952.74 km<br/>
+<b>Bearing</b>: 74.53&deg;]]></description>
+  <Point>
+    <coordinates>-75.625,38.9375,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>KD0BTO</name>
+  <description><![CDATA[<h1>DAVID J CHRISTLE</h1>
+<a href="https://www.qrz.com/db/KD0BTO">QRZ Page</a><br/>
+<b>QTH</b>: SAN FRANCISCO<br/>
+<b>Grid</b>: CM87XJ<br/>
+<b>Country</b>: United States<br/>
+<b>Distance</b>: 132.98 km<br/>
+<b>Bearing</b>: 192.79&deg;]]></description>
+  <Point>
+    <coordinates>-122.041666666667,37.3958333333333,0</coordinates>
+  </Point>
+</Placemark><Placemark>
+  <name>W5TTW</name>
+  <description><![CDATA[<h1>Paul A Culin</h1>
+<a href="https://www.qrz.com/db/W5TTW">QRZ Page</a><br/>
+<b>QTH</b>: The Woodlands<br/>
+<b>Grid</b>: EM20FE<br/>
+<b>Country</b>: United States<br/>
+<b>Distance</b>: 2564.60 km<br/>
+<b>Bearing</b>: 103.35&deg;]]></description>
+  <Point>
+    <coordinates>-95.5416666666667,30.1875,0</coordinates>
   </Point>
 </Placemark>
 </Document>
