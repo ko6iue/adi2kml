@@ -82,33 +82,31 @@ gridsquare: ~A
       (qso-qth adi-record)
       (qso-gridsquare adi-record)
       (qso-country adi-record)
-      (car dist-bearing)
-      (cadr dist-bearing))))
+      (first dist-bearing)
+      (second dist-bearing))))
 
 (define (kml-record-write port my-gridsquare adi-record)
   (let ((coord (maidenhead-to-gps-center
                 (qso-gridsquare adi-record))))
     (if (null? coord) '()
-      (let ((lat (car coord))
-            (lon (cadr coord)))
-        (serialize-sxml
-          `(Placemark
-            (name
-             ,(qso-callsign adi-record))
-            (description
-             ,(generate-kml-description
-               my-gridsquare
-               adi-record))
-            (Point
-             (coordinates
-              ,(format #f
-                "~A,~A,0"
-                lon
-                lat))))
-          output:
-          port
-          cdata-section-elements:
-          '(description))))))
+      (serialize-sxml
+        `(Placemark
+          (name
+           ,(qso-callsign adi-record))
+          (description
+           ,(generate-kml-description
+             my-gridsquare
+             adi-record))
+          (Point
+           (coordinates
+            ,(format #f
+              "~A,~A,0"
+              (second coord)
+              (first coord)))))
+        output:
+        port
+        cdata-section-elements:
+        '(description)))))
 
 (define (kml-footer-write port)
   (format port "\n</Document>\n</kml>\n"))
@@ -177,9 +175,9 @@ gridsquare: ~A
 
 (define (adi2kml-args args)
   (if (= 3 (length args))
-    (adi2kml (car args)
-      (cadr args)
-      (caddr args))
+    (adi2kml (first args)
+      (second args)
+      (third args))
     (begin
       (format #t "\nERROR invalid arguments: ~A\n\n" args)
       (display "adi2kml reads ADIF files and writes KML files\n\n")
