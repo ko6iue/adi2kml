@@ -127,13 +127,11 @@ lon-res-degrees: ~A
                   (mh-lat-res-degrees-set! mh-record (car res))
                   (mh-lon-res-degrees-set! mh-record (cadr res))
                   ; calculate and save center point
-                  (mh-lat-center-set!
-                    mh-record
+                  (mh-lat-center-set! mh-record
                     (calc-center
                       (mh-lat-sw-corner mh-record)
                       (mh-lat-res-degrees mh-record)))
-                  (mh-lon-center-set!
-                    mh-record
+                  (mh-lon-center-set! mh-record
                     (calc-center
                       (mh-lon-sw-corner mh-record)
                       (mh-lon-res-degrees mh-record)))
