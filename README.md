@@ -103,6 +103,7 @@ The maidenhead grid square you provide on the `adi2kml` commandline is used in t
 * The ADIF parser I wrote uses simple regular expressions. It works for ADIF files exported by [QRZ](https://qrz.com) and [QLog](https://github.com/foldynl/QLog) but your mileage may vary. There is currently no support for the ADX File Format.
 * Only the first QSO for each callsign is processed. The others are ignored; otherwise, a person you talk with often will have multiple pins at their location.  This could be handled better in the future.
 * I have just started writing tests with time more will follow.
+* ADIF records without a maidenhead grid are ignored for now.
 
 ## Contributions
 
