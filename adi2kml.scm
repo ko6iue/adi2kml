@@ -88,25 +88,56 @@ gridsquare: ~A
   (let ((their-mh (make-maidenhead
                    (qso-gridsquare adi-record))))
     (if (null? their-mh) '()
-      (serialize-sxml
-        `(Placemark
-          (name
-           ,(qso-callsign adi-record))
-          (description
-           ,(generate-kml-description
-             my-mh
-             their-mh
-             adi-record))
-          (Point
-           (coordinates
-            ,(format #f
-              "~A,~A,0"
-              (mh-lon-center their-mh)
-              (mh-lat-center their-mh)))))
-        output:
-        port
-        cdata-section-elements:
-        '(description)))))
+      (begin
+        ;; write center coordinate of QSO
+        (serialize-sxml
+          `(Placemark
+            (name
+             ,(qso-callsign adi-record))
+            (description
+             ,(generate-kml-description
+               my-mh
+               their-mh
+               adi-record))
+            (Point
+             (coordinates
+              ,(format #f
+                "~A,~A,0"
+                (mh-lon-center their-mh)
+                (mh-lat-center their-mh)))))
+          output:
+          port
+          cdata-section-elements:
+          '(description))
+        ;; write boundaries of maidenhead for QSO
+        (serialize-sxml
+          `(Placemark
+            (name ,(string-append (qso-callsign adi-record) " MH"))
+            (LineString
+             (tessellate 1)
+             (coordinates
+              ,(format #f "~A,~A,0\n~A,~A,0\n~A,~A,0\n~A,~A,0\n~A,~A,0\n"
+                ;; sw corner
+                (mh-lon-sw-corner their-mh)
+                (mh-lat-sw-corner their-mh)
+                ;; nw corner
+                (mh-lon-sw-corner their-mh)
+                (+ (mh-lat-sw-corner their-mh)
+                  (mh-lat-res-degrees their-mh))
+                ;; ne corner
+                (+ (mh-lon-res-degrees their-mh)
+                  (mh-lon-sw-corner their-mh))
+                (+ (mh-lat-sw-corner their-mh)
+                  (mh-lat-res-degrees their-mh))
+                ;; se corner
+                (+ (mh-lon-res-degrees their-mh)
+                  (mh-lon-sw-corner their-mh))
+                (mh-lat-sw-corner their-mh)
+                ;; sw corner
+                (mh-lon-sw-corner their-mh)
+                (mh-lat-sw-corner their-mh)))))
+          output:
+          port)))))
 
 (define (kml-footer-write port)
   (format port "\n</Document>\n</kml>\n"))
