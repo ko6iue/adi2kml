@@ -17,7 +17,7 @@ You can run view the `sample.kml` file on Google Earth by:
 2. Visiting the [Google Earth](https://earth.google.com/) web site.
 3. Uploading the KML file using the "Open local KML file" feature.
 
-The Google Earth interface had multiple was to upload.  If you see a menu bar, click the "File" menu and then choose `Open local KML file`. Some interfaces, just have a large `Open local KML file` button.
+The Google Earth interface had multiple ways to upload.  If you see a menu bar, click the "File" menu and then choose `Open local KML file`. Some interfaces, just have a large `Open local KML file` button.
 
 You don't need a Google account to use Google Earth.
 
