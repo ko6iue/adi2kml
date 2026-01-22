@@ -62,8 +62,7 @@
       (maidenhead-to-gps-center "DM"))
     (test '(38.5 -101.0)
       (maidenhead-to-gps-center "DM98"))
-    (test 0.93007 (haversine 9.96))
-    (test 19013.87 (car (maidenhead-distance-bearing "AA00AA00" "AR00AX09")))
-    (test 0.0 (cadr (maidenhead-distance-bearing "AA00AA00" "AR00AX09")))))
+    (test 19013.87 (maidenhead-distance "AA00AA00" "AR00AX09"))
+    (test 0.0 (maidenhead-bearing "AA00AA00" "AR00AX09"))))
 
 (test-exit)

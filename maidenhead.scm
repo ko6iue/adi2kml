@@ -119,48 +119,53 @@
 (define (rad->degs rad)
   (* rad (/ 180 pi)))
 
-(define (haversine theta) ; in radians
-  (expt (sin (/ theta 2)) 2))
-
-(define (maidenhead-distance-bearing from to)
-  (let* ((from-coord (maidenhead-to-gps-center from))
-         (lat1 (deg->rads (car from-coord)))
-         (lon1 (deg->rads (cadr from-coord)))
-         (to-coord (maidenhead-to-gps-center to))
-         (lat2 (deg->rads (car to-coord)))
-         (lon2 (deg->rads (cadr to-coord)))
+(define (maidenhead-distance-gps from to)
+  (let* ((lat1 (deg->rads (car from)))
+         (lon1 (deg->rads (cadr from)))
+         (lat2 (deg->rads (car to)))
+         (lon2 (deg->rads (cadr to)))
          (volumetric-mean-radius-earth-km 6371.0)
-         (delta-lat (- lat2 lat1))
-         (delta-lon (- lon2 lon1))
+         (haversine
+           (lambda(theta)
+             (expt (sin (/ theta 2)) 2)))
          (square-half-chord
            (+
-             (haversine delta-lat)
-             (*
-               (cos lat1)
-               (cos lat2)
-               (haversine delta-lon))))
+             (haversine (- lat2 lat1))
+             (* (cos lat1) (cos lat2)
+               (haversine (- lon2 lon1)))))
          (angular-distance
-           (*
-             2
-             (atan (sqrt square-half-chord)
-               (sqrt (- 1 square-half-chord)))))
-         (distance-km (* angular-distance
-                       volumetric-mean-radius-earth-km))
+           (* 2
+             (atan
+               (sqrt square-half-chord)
+               (sqrt (- 1 square-half-chord))))))
+    (* angular-distance
+      volumetric-mean-radius-earth-km)))
+
+(define (maidenhead-distance from to)
+  (let ((from-coord (maidenhead-to-gps-center from))
+        (to-coord (maidenhead-to-gps-center to)))
+    (if (not (and from-coord to-coord)) '()
+      (maidenhead-distance-gps from-coord to-coord))))
+
+(define (maidenhead-bearing-gps from to)
+  (let* ((lat1 (deg->rads (car from)))
+         (lon1 (deg->rads (cadr from)))
+         (lat2 (deg->rads (car to)))
+         (lon2 (deg->rads (cadr to)))
+         (delta-lon (- lon2 lon1))
          (bearing
            (rad->degs
-             (atan
-               (*
-                 (sin delta-lon)
-                 (cos lat2))
+             (atan (* (sin delta-lon) (cos lat2))
                (-
-                 (*
-                   (cos lat1)
-                   (sin lat2))
-                 (*
-                   (sin lat1)
-                   (cos lat2)
-                   (cos delta-lon))))))
+                 (* (cos lat1) (sin lat2))
+                 (* (sin lat1) (cos lat2) (cos delta-lon))))))
          (bearing-final (if (< bearing 0)
                          (+ 360 bearing)
                          bearing)))
-    (list distance-km bearing-final)))
+    bearing-final))
+
+(define (maidenhead-bearing from to)
+  (let ((from-coord (maidenhead-to-gps-center from))
+        (to-coord (maidenhead-to-gps-center to)))
+    (if (not (and from-coord to-coord)) '()
+      (maidenhead-bearing-gps from-coord to-coord))))

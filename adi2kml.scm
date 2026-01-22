@@ -66,24 +66,24 @@ gridsquare: ~A
 <kml xmlns=\"http://www.opengis.net/kml/2.2\">\n<Document>\n"))
 
 (define (generate-kml-description my-gridsquare adi-record)
-  (let ((dist-bearing (maidenhead-distance-bearing
-                       my-gridsquare
-                       (qso-gridsquare adi-record))))
-    (format #f
-      "<h1>~A</h1>
+  (let ((from (maidenhead-to-gps-center my-gridsquare))
+        (to (maidenhead-to-gps-center (qso-gridsquare adi-record))))
+    (if (not (and from to)) '()
+      (format #f
+        "<h1>~A</h1>
 <a href=\"https://www.qrz.com/db/~A\">QRZ Page</a><br/>
 <b>QTH</b>: ~A<br/>
 <b>Grid</b>: ~A<br/>
 <b>Country</b>: ~A<br/>
 <b>Distance</b>: ~0,2F km<br/>
 <b>Bearing</b>: ~0,2F&deg;"
-      (qso-name adi-record)
-      (qso-callsign adi-record)
-      (qso-qth adi-record)
-      (qso-gridsquare adi-record)
-      (qso-country adi-record)
-      (first dist-bearing)
-      (second dist-bearing))))
+        (qso-name adi-record)
+        (qso-callsign adi-record)
+        (qso-qth adi-record)
+        (qso-gridsquare adi-record)
+        (qso-country adi-record)
+        (maidenhead-distance-gps from to)
+        (maidenhead-bearing-gps from to)))))
 
 (define (kml-record-write port my-gridsquare adi-record)
   (let ((coord (maidenhead-to-gps-center
