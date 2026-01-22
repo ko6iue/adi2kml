@@ -136,7 +136,7 @@ lon-res-degrees: ~A
                     mh-record
                     (calc-center
                       (mh-lon-sw-corner mh-record)
-                      (mh-lat-res-degrees mh-record)))
+                      (mh-lon-res-degrees mh-record)))
                   ; return completed record
                   mh-record)
                 (let ((lonlat (take steps 2))
