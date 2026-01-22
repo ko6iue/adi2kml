@@ -34,6 +34,7 @@
   (chicken io)
   (chicken process-context)
   (sxml-serializer)
+  (srfi-1)
   (srfi-48))
 
 (define-record
@@ -65,44 +66,43 @@ gridsquare: ~A
   (format port "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <kml xmlns=\"http://www.opengis.net/kml/2.2\">\n<Document>\n"))
 
-(define (generate-kml-description my-gridsquare adi-record)
-  (let ((from (maidenhead-to-gps-center my-gridsquare))
-        (to (maidenhead-to-gps-center (qso-gridsquare adi-record))))
-    (if (not (and from to)) '()
-      (format #f
-        "<h1>~A</h1>
+(define (generate-kml-description my-mh their-mh adi-record)
+  (if (not (and my-mh their-mh)) '()
+    (format #f
+      "<h1>~A</h1>
 <a href=\"https://www.qrz.com/db/~A\">QRZ Page</a><br/>
 <b>QTH</b>: ~A<br/>
 <b>Grid</b>: ~A<br/>
 <b>Country</b>: ~A<br/>
 <b>Distance</b>: ~0,2F km<br/>
 <b>Bearing</b>: ~0,2F&deg;"
-        (qso-name adi-record)
-        (qso-callsign adi-record)
-        (qso-qth adi-record)
-        (qso-gridsquare adi-record)
-        (qso-country adi-record)
-        (maidenhead-distance-gps from to)
-        (maidenhead-bearing-gps from to)))))
+      (qso-name adi-record)
+      (qso-callsign adi-record)
+      (qso-qth adi-record)
+      (qso-gridsquare adi-record)
+      (qso-country adi-record)
+      (maidenhead-distance-km my-mh their-mh)
+      (maidenhead-bearing-degrees my-mh their-mh))))
 
-(define (kml-record-write port my-gridsquare adi-record)
-  (let ((coord (maidenhead-to-gps-center
-                (qso-gridsquare adi-record))))
-    (if (null? coord) '()
+(define (kml-record-write port my-mh adi-record)
+  (let ((their-mh (make-maidenhead
+                   (qso-gridsquare adi-record))))
+    (if (null? their-mh) '()
       (serialize-sxml
         `(Placemark
           (name
            ,(qso-callsign adi-record))
           (description
            ,(generate-kml-description
-             my-gridsquare
+             my-mh
+             their-mh
              adi-record))
           (Point
            (coordinates
             ,(format #f
               "~A,~A,0"
-              (second coord)
-              (first coord)))))
+              (mh-lon-center their-mh)
+              (mh-lat-center their-mh)))))
         output:
         port
         cdata-section-elements:
@@ -143,35 +143,42 @@ gridsquare: ~A
     (length processed-callsigns)))
 
 (define (adi2kml my-gridsquare adi-filename kml-filename)
-  (let ((kml-port (open-output-file kml-filename)))
-    (kml-header-write kml-port)
+  (let ((my-mh (make-maidenhead my-gridsquare))
+        (kml-port (open-output-file kml-filename)))
+    (if (null? my-mh)
+      (begin
+        (format #t "Invalid maidenhead: ~A\n" my-gridsquare)
+        (final-output))
+      (begin
+        ; header
+        (kml-header-write kml-port)
+        ; process adi records
+        (call-with-input-file
+          adi-filename
+          (lambda (port)
+            (let ((last-record '#f))
+              (do
+                ((record (make-empty-qso)))
+                ((eq? #t last-record))
 
-    (call-with-input-file
-      adi-filename
-      (lambda (port)
-        (let ((last-record '#f))
-          (do
-            ((record (make-empty-qso)))
-            ((eq? #t last-record))
+                (do
+                  ((line (read-line port) (read-line port)))
+                  ((eq? #!eof line) (set! last-record #t))
 
-            (do
-              ((line (read-line port) (read-line port)))
-              ((eq? #!eof line) (set! last-record #t))
-
-              (regex-case
-                line
-                ("<(.*):[0-9:]+>(.*)"
-                  (all key value)
-                  (update-adi-record record key value))
-                ("<eor>" _
-                  (process-adi-record
-                    kml-port
-                    my-gridsquare
-                    record)
-                  (set! record (make-empty-qso)))))))))
-
-    (kml-footer-write kml-port))
-  (final-output))
+                  (regex-case
+                    line
+                    ("<(.*):[0-9:]+>(.*)"
+                      (all key value)
+                      (update-adi-record record key value))
+                    ("<eor>" _
+                      (process-adi-record
+                        kml-port
+                        my-mh
+                        record)
+                      (set! record (make-empty-qso)))))))))
+        ; footer
+        (kml-footer-write kml-port)
+        (final-output)))))
 
 (define (adi2kml-args args)
   (if (= 3 (length args))

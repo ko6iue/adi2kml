@@ -30,9 +30,39 @@
 ; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-(import abnf
+(import
+  (chicken format)
+  abnf
   lexgen
   srfi-1)
+
+(define-record
+  mh
+  text
+  lat-sw-corner
+  lon-sw-corner
+  lat-res-degrees
+  lon-res-degrees
+  lat-center
+  lon-center)
+
+(define (maidenhead-print mh)
+  (format #t "
+           text: ~A
+  lat-sw-corner: ~A
+  lon-sw-corner: ~A
+lat-res-degrees: ~A
+lon-res-degrees: ~A
+     lat-center: ~A
+     lon-center: ~A
+"
+    (mh-text mh)
+    (mh-lat-sw-corner mh)
+    (mh-lon-sw-corner mh)
+    (mh-lat-res-degrees mh)
+    (mh-lon-res-degrees mh)
+    (mh-lat-center mh)
+    (mh-lon-center mh)))
 
 (define (make-maidenhead-lexer-closure)
   ;; closure to capture ABNF definitions for
@@ -67,7 +97,7 @@
           ((null? (cadr parsed)) (car parsed))
           (else '()))))))
 
-(define (make-maidenhead-calculations-closure)
+(define (make-maidenhead-closure)
   (let* ((mh-lexer (make-maidenhead-lexer-closure))
          (ci char->integer)
          (char-to-step
@@ -83,33 +113,44 @@
            (lambda(text)
              (map char-to-step (mh-lexer text)))))
     (lambda (text)
-      (let ((sw-corner-lat -90)
-            (sw-corner-lon -180)
-            (steps (parse-mh text)))
-        (if (null? steps) '()
-          (let loop ((i 0) (steps steps))
-            (if (null? steps)
-              `((,sw-corner-lat ,sw-corner-lon)
-                ,(list-ref stepsize-degrees (- i 1)))
-              (let ((lonlat (take steps 2))
-                    (res (list-ref stepsize-degrees i)))
-                (set! sw-corner-lat
-                  (+ sw-corner-lat (*(cadr lonlat) (car res))))
-                (set! sw-corner-lon
-                  (+ sw-corner-lon (*(car lonlat) (cadr res))))
-                (loop (+ i 1) (drop steps 2))))))))))
+      (let ((mh-record (make-mh text -90 -180 0 0 0 0))
+            (steps (parse-mh text))
+            (calc-center (lambda(point res)
+                          (exact->inexact (+ point (/ res 2))))))
+        (if (null? steps)
+          '() ; invalid MH text early return
+          (begin
+            (let loop ((i 0) (steps steps))
+              (if (null? steps) ; sw corner calculation complete
+                (let ((res (list-ref stepsize-degrees (- i 1))))
+                  ; set lat lon resolution
+                  (mh-lat-res-degrees-set! mh-record (car res))
+                  (mh-lon-res-degrees-set! mh-record (cadr res))
+                  ; calculate and save center point
+                  (mh-lat-center-set!
+                    mh-record
+                    (calc-center
+                      (mh-lat-sw-corner mh-record)
+                      (mh-lat-res-degrees mh-record)))
+                  (mh-lon-center-set!
+                    mh-record
+                    (calc-center
+                      (mh-lon-sw-corner mh-record)
+                      (mh-lat-res-degrees mh-record)))
+                  ; return completed record
+                  mh-record)
+                (let ((lonlat (take steps 2))
+                      (res (list-ref stepsize-degrees i)))
+                  (mh-lat-sw-corner-set! mh-record
+                    (+ (mh-lat-sw-corner mh-record)
+                      (*(cadr lonlat) (car res))))
+                  (mh-lon-sw-corner-set! mh-record
+                    (+ (mh-lon-sw-corner mh-record)
+                      (*(car lonlat) (cadr res))))
+                  (loop (+ i 1) (drop steps 2)))))
+            mh-record))))))
 
-(define maidenhead-to-gps (make-maidenhead-calculations-closure))
-
-(define (maidenhead-to-gps-center text)
-  (let ((coord (maidenhead-to-gps text)))
-    (if (null? coord) '()
-      (let ((lat (caar coord))
-            (lon (cadar coord))
-            (latscale (caadr coord))
-            (lonscale (cadadr coord)))
-        `(,(exact->inexact (+ lat (/ latscale 2)))
-          ,(exact->inexact (+ lon (/ lonscale 2))))))))
+(define make-maidenhead (make-maidenhead-closure))
 
 (define pi 3.1415926)
 
@@ -119,53 +160,43 @@
 (define (rad->degs rad)
   (* rad (/ 180 pi)))
 
-(define (maidenhead-distance-gps from to)
-  (let* ((lat1 (deg->rads (car from)))
-         (lon1 (deg->rads (cadr from)))
-         (lat2 (deg->rads (car to)))
-         (lon2 (deg->rads (cadr to)))
-         (volumetric-mean-radius-earth-km 6371.0)
-         (haversine
-           (lambda(theta)
-             (expt (sin (/ theta 2)) 2)))
-         (square-half-chord
-           (+
-             (haversine (- lat2 lat1))
-             (* (cos lat1) (cos lat2)
-               (haversine (- lon2 lon1)))))
-         (angular-distance
-           (* 2
-             (atan
-               (sqrt square-half-chord)
-               (sqrt (- 1 square-half-chord))))))
-    (* angular-distance
-      volumetric-mean-radius-earth-km)))
+(define (maidenhead-distance-km from to)
+  (if (not (and from to)) '()
+    (let* ((lat1 (deg->rads (mh-lat-center from)))
+           (lon1 (deg->rads (mh-lon-center from)))
+           (lat2 (deg->rads (mh-lat-center to)))
+           (lon2 (deg->rads (mh-lon-center to)))
+           (volumetric-mean-radius-earth-km 6371.0)
+           (haversine
+             (lambda(theta)
+               (expt (sin (/ theta 2)) 2)))
+           (square-half-chord
+             (+
+               (haversine (- lat2 lat1))
+               (* (cos lat1) (cos lat2)
+                 (haversine (- lon2 lon1)))))
+           (angular-distance
+             (* 2
+               (atan
+                 (sqrt square-half-chord)
+                 (sqrt (- 1 square-half-chord))))))
+      (* angular-distance
+        volumetric-mean-radius-earth-km))))
 
-(define (maidenhead-distance from to)
-  (let ((from-coord (maidenhead-to-gps-center from))
-        (to-coord (maidenhead-to-gps-center to)))
-    (if (not (and from-coord to-coord)) '()
-      (maidenhead-distance-gps from-coord to-coord))))
-
-(define (maidenhead-bearing-gps from to)
-  (let* ((lat1 (deg->rads (car from)))
-         (lon1 (deg->rads (cadr from)))
-         (lat2 (deg->rads (car to)))
-         (lon2 (deg->rads (cadr to)))
-         (delta-lon (- lon2 lon1))
-         (bearing
-           (rad->degs
-             (atan (* (sin delta-lon) (cos lat2))
-               (-
-                 (* (cos lat1) (sin lat2))
-                 (* (sin lat1) (cos lat2) (cos delta-lon))))))
-         (bearing-final (if (< bearing 0)
-                         (+ 360 bearing)
-                         bearing)))
-    bearing-final))
-
-(define (maidenhead-bearing from to)
-  (let ((from-coord (maidenhead-to-gps-center from))
-        (to-coord (maidenhead-to-gps-center to)))
-    (if (not (and from-coord to-coord)) '()
-      (maidenhead-bearing-gps from-coord to-coord))))
+(define (maidenhead-bearing-degrees from to)
+  (if (not (and from to)) '()
+    (let* ((lat1 (deg->rads (mh-lat-center from)))
+           (lon1 (deg->rads (mh-lon-center from)))
+           (lat2 (deg->rads (mh-lat-center to)))
+           (lon2 (deg->rads (mh-lon-center to)))
+           (delta-lon (- lon2 lon1))
+           (bearing
+             (rad->degs
+               (atan (* (sin delta-lon) (cos lat2))
+                 (-
+                   (* (cos lat1) (sin lat2))
+                   (* (sin lat1) (cos lat2) (cos delta-lon))))))
+           (bearing-final (if (< bearing 0)
+                           (+ 360 bearing)
+                           bearing)))
+      bearing-final)))

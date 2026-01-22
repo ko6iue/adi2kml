@@ -61,26 +61,27 @@ $ ./adi2kml JK42GO input.adi output.kml
 
 ## Performance
 
-The scheme script is able to process about 2000 QSOs per second.
+The scheme script is able to process about 2300 QSOs per second.
 
 ```
-$ time ./adi2kml.scm JK42NO ../chicken/archive/sample.adi sample.kml
-Processed 1267 unique callsigns with maidenhead data
+time ./adi2kml.scm JK42NO sample.adi sample.kml
+Processed 1281 unique callsigns with maidenhead data
 
-real    0m0.553s
-user    0m0.539s
-sys     0m0.013s
-```
-
-The compiled binary is able to process about 3000 QSOs per second.
+real    0m0.545s
+user    0m0.531s
+sys     0m0.012s
 
 ```
-$ time ./adi2kml JK42NO ../chicken/archive/sample.adi sample.kml
-Processed 1267 unique callsigns with maidenhead data
 
-real    0m0.397s
-user    0m0.382s
-sys     0m0.015s
+The compiled binary is able to process about 3200 QSOs per second (a 39% improvement).
+
+```
+time ./adi2kml JK42NO sample.adi sample.kml
+Processed 1281 unique callsigns with maidenhead data
+
+real    0m0.393s
+user    0m0.380s
+sys     0m0.012s
 ```
 
 This was run on my laptop with an Intel i9-14900HX (32) @ 5.600GHz processor.
