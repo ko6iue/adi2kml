@@ -23,6 +23,8 @@ You don't need a Google account to use Google Earth.
 
 ![Google Earth Screenshot showing QSOs and popup](screenshot.png)
 
+This image shows what it looks like when you turn on photos in the basemap settings to see photos from each area.
+
 ## Running adi2kml to build your own KML file
 
 You will need to install [CHICKEN scheme](https://www.call-cc.org/) and then use
