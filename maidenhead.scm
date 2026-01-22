@@ -87,12 +87,10 @@
             (sw-corner-lon -180)
             (steps (parse-mh text)))
         (if (null? steps) '()
-          (let loop ((i 0)
-                     (steps steps))
+          (let loop ((i 0) (steps steps))
             (if (null? steps)
-              (list
-                (list sw-corner-lat sw-corner-lon)
-                (list-ref stepsize-degrees (- i 1)))
+              `((,sw-corner-lat ,sw-corner-lon)
+                ,(list-ref stepsize-degrees (- i 1)))
               (let ((lonlat (take steps 2))
                     (res (list-ref stepsize-degrees i)))
                 (set! sw-corner-lat
@@ -110,9 +108,8 @@
             (lon (cadar coord))
             (latscale (caadr coord))
             (lonscale (cadadr coord)))
-        (list
-          (exact->inexact (+ lat (/ latscale 2)))
-          (exact->inexact (+ lon (/ lonscale 2))))))))
+        `(,(exact->inexact (+ lat (/ latscale 2)))
+          ,(exact->inexact (+ lon (/ lonscale 2))))))))
 
 (define pi 3.1415926)
 
