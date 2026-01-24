@@ -96,16 +96,17 @@ gridsquare: ~A
     (if (null? their-mh) '()
       (begin
         (format port "<Placemark><name>~A</name><description>~A~A~A</description>
-<MultiGeometry><Point><coordinates>~A,~A,0</coordinates></Point>
-<LineString><tessellate>1</tessellate>
+<Point><coordinates>~A,~A,0</coordinates></Point></Placemark>
+<Placemark><name>~A</name><LineString><tessellate>1</tessellate>
 <coordinates>~A,~A,0\n~A,~A,0\n~A,~A,0\n~A,~A,0\n~A,~A,0</coordinates>
-</LineString></MultiGeometry></Placemark>"
+</LineString></Placemark>"
           (qso-callsign adi-record)
           cdata-open
           (generate-kml-description my-mh their-mh adi-record)
           cdata-close
           (mh-lon-center their-mh)
           (mh-lat-center their-mh)
+          (string-append (qso-callsign adi-record) " maidenhead box")
           ;; sw corner
           (mh-lon-sw-corner their-mh)
           (mh-lat-sw-corner their-mh)
