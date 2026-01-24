@@ -7,7 +7,7 @@ Most loggers and sites like [QRZ](https://www.qrz.com/) support ADIF file export
 
 ## Demo
 
-You can view KML files inside [Google Earth](https://earth.google.com) as well as a number of other websites e.g. [KMZView](https://kmzview.com). Just search for "Sites to view KML" or something similar and you'll find dozens of sites.
+You can view KML files inside [Google Earth](https://earth.google.com) as well as a number of other websites. Just do a web search for "Sites to view KML" or "KML viewer" or something similar and you'll find dozens of sites.
 
 For example, you can view my [QSOs over the last 6 months on KMZView](https://kmzview.com/wobAgbf1TbTGkDXwbpO3). The KML files that `adi2kml` generates include details like operator's name, QRZ page link, QTH, maidenhead grid, country, distance from your QTH, GPS coordinates, and bearing in degrees. You can view this information by clicking the markers on the map. If you are not using an ad blocker, you may see ads at the bottom of the KMZView site.
 
