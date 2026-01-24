@@ -162,7 +162,7 @@ their grid: ~A
             (cons callsign processed-callsigns)))))))
 
 (define (final-output)
-  (format #t "Processed ~A unique callsigns with maidenhead data\n"
+  (format #t "Processed ~A unique callsigns\n"
     (length processed-callsigns)))
 
 (define (adi2kml adi-filename kml-filename)
