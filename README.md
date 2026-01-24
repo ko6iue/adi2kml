@@ -27,8 +27,7 @@ This image shows what it looks like when you turn on photos in the basemap setti
 
 ## Running adi2kml to build your own KML file
 
-You will need to install [CHICKEN scheme](https://www.call-cc.org/) and then use
-`chicken-install` to install the necessary modules: `regex`, `regex-case`, `srfi-1`, `srfi-48`, `sxml-serializer`, `abnf`, `lexgen`.
+You will need to install [CHICKEN scheme](https://www.call-cc.org/). `adi2kml` only uses modules shipped with CHICKEN Scheme so no further setup is needed.
 
 CHICKEN scheme runs on [a number of different platforms](https://wiki.call-cc.org/portability) so `adi2kml` should run on your favorite (or semi-favorite) OS. I've only tested it on Linux.
 
@@ -55,11 +54,19 @@ To compile the scheme scripts into a C binary, run the following command
 $ csc -o adi2kml adi2kml.scm
 ```
 
+If you want to copy this binary to another machine which doesn't have CHICKEN scheme installed, you will need to use static linking with the `-static` flag, e.g.
+
+```
+$ csc -static -o adi2kml adi2kml.scm
+```
+
+
 You use the binary, just like the script, running e.g.
 
 ```
 $ ./adi2kml JK42GO input.adi output.kml
 ```
+
 
 ## Performance
 
