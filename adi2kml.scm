@@ -30,9 +30,10 @@
 (load "maidenhead.scm")
 
 (import (scheme)
-  (regex-case)
+  (chicken irregex)
   (chicken io)
   (chicken process-context)
+  (chicken string)
   (sxml-serializer)
   (srfi-1)
   (srfi-48))
@@ -175,7 +176,8 @@ gridsquare: ~A
 
 (define (adi2kml my-gridsquare adi-filename kml-filename)
   (let ((my-mh (make-maidenhead my-gridsquare))
-        (kml-port (open-output-file kml-filename)))
+        (kml-port (open-output-file kml-filename))
+        (adi-kv-regex (irregex "^<(.*):[0-9:]+>(.*)$")))
     (if (null? my-mh)
       (begin
         (format #t "Invalid maidenhead: ~A\n" my-gridsquare)
@@ -196,17 +198,17 @@ gridsquare: ~A
                   ((line (read-line port) (read-line port)))
                   ((eq? #!eof line) (set! last-record #t))
 
-                  (regex-case
-                    line
-                    ("<(.*):[0-9:]+>(.*)"
-                      (all key value)
-                      (update-adi-record record key value))
-                    ("<eor>" _
-                      (process-adi-record
-                        kml-port
-                        my-mh
-                        record)
-                      (set! record (make-empty-qso)))))))))
+                  (let ((kv (irregex-match adi-kv-regex line)))
+                    (if kv
+                      (update-adi-record record
+                        (irregex-match-substring kv 1)
+                        (irregex-match-substring kv 2))
+                      (when (substring-index "<eor>" line)
+                        (process-adi-record
+                          kml-port
+                          my-mh
+                          record)
+                        (set! record (make-empty-qso))))))))))
         ; footer
         (kml-footer-write kml-port)
         (final-output)))))
