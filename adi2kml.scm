@@ -35,6 +35,7 @@
   (chicken format)
   (chicken io)
   (chicken process-context)
+  (chicken flonum)
   (chicken string))
 
 (define-record
@@ -81,9 +82,8 @@ gridsquare: ~A
       (qso-qth adi-record)
       (qso-gridsquare adi-record)
       (qso-country adi-record)
-      ; TODO: Better formatting for float values: ~F support?
-      (round (maidenhead-distance-km my-mh their-mh))
-      (round (maidenhead-bearing-degrees my-mh their-mh)))))
+      (maidenhead-distance-km my-mh their-mh)
+      (maidenhead-bearing-degrees my-mh their-mh))))
 
 (define (kml-record-write port my-mh adi-record)
   (let ((their-mh (make-maidenhead
@@ -167,6 +167,9 @@ gridsquare: ~A
         (format #t "Invalid maidenhead: ~A\n" my-gridsquare)
         (final-output))
       (begin
+	; setup float number print precision
+	(flonum-print-precision 5)
+
         ; header
         (kml-header-write kml-port)
         ; process adi records
