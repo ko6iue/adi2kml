@@ -77,7 +77,7 @@ their grid: ~A
   (if (not (and my-grid their-grid)) '()
     (sprintf
       "<h1>~A</h1>
-<a href=\"https://www.qrz.com/db/~A\">QRZ Page</a><br/>
+<b><a href=\"https://www.qrz.com/db/~A\">QRZ Page</a></b><br/>
 <b>QTH</b>: ~A<br/>
 <b>Grid</b>: ~A<br/>
 <b>Country</b>: ~A<br/>
