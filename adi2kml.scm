@@ -47,10 +47,11 @@
   name
   country
   qth
-  gridsquare)
+  my-grid
+  their-grid)
 
 (define (make-empty-qso)
-  (make-qso "" "" "" "" ""))
+  (make-qso "" "" "" "" "" ""))
 
 (define (qso-printer qso)
   (format #t "
@@ -58,20 +59,22 @@
       name: ~A
    country: ~A
        QTH: ~A
-gridsquare: ~A
+   my grid: ~A
+their grid: ~A
 "
     (qso-callsign qso)
     (qso-name qso)
     (qso-country qso)
     (qso-qth qso)
-    (qso-gridsquare qso)))
+    (qso-my-grid qso)
+    (gso-their-grid qso)))
 
 (define (kml-header-write port)
   (format port "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <kml xmlns=\"http://www.opengis.net/kml/2.2\">\n<Document>\n"))
 
-(define (generate-kml-description my-mh their-mh adi-record)
-  (if (not (and my-mh their-mh)) '()
+(define (generate-kml-description my-grid their-grid adi-record)
+  (if (not (and my-grid their-grid)) '()
     (sprintf
       "<h1>~A</h1>
 <a href=\"https://www.qrz.com/db/~A\">QRZ Page</a><br/>
@@ -83,17 +86,19 @@ gridsquare: ~A
       (qso-name adi-record)
       (qso-callsign adi-record)
       (qso-qth adi-record)
-      (qso-gridsquare adi-record)
+      (qso-their-grid adi-record)
       (qso-country adi-record)
-      (maidenhead-distance-km my-mh their-mh)
-      (maidenhead-bearing-degrees my-mh their-mh))))
+      (maidenhead-distance-km my-grid their-grid)
+      (maidenhead-bearing-degrees my-grid their-grid))))
 
-(define (kml-record-write port my-mh adi-record)
-  (let ((their-mh (make-maidenhead
-                   (qso-gridsquare adi-record)))
+(define (kml-record-write port adi-record)
+  (let ((my-grid (make-maidenhead
+                  (qso-my-grid adi-record)))
+        (their-grid (make-maidenhead
+                     (qso-their-grid adi-record)))
         (cdata-open "<![CDATA[")
         (cdata-close "]]>"))
-    (if (null? their-mh) '()
+    (if (or (null? my-grid) (null? their-grid)) '()
       (begin
         (format port "<Placemark><name>~A</name><description>~A~A~A</description>
 <Point><coordinates>~A,~A,0</coordinates></Point></Placemark>
@@ -102,30 +107,30 @@ gridsquare: ~A
 </LineString></Placemark>"
           (qso-callsign adi-record)
           cdata-open
-          (generate-kml-description my-mh their-mh adi-record)
+          (generate-kml-description my-grid their-grid adi-record)
           cdata-close
-          (mh-lon-center their-mh)
-          (mh-lat-center their-mh)
+          (mh-lon-center their-grid)
+          (mh-lat-center their-grid)
           (string-append (qso-callsign adi-record) " maidenhead box")
           ;; sw corner
-          (mh-lon-sw-corner their-mh)
-          (mh-lat-sw-corner their-mh)
+          (mh-lon-sw-corner their-grid)
+          (mh-lat-sw-corner their-grid)
           ;; nw corner
-          (mh-lon-sw-corner their-mh)
-          (+ (mh-lat-sw-corner their-mh)
-            (mh-lat-res-degrees their-mh))
+          (mh-lon-sw-corner their-grid)
+          (+ (mh-lat-sw-corner their-grid)
+            (mh-lat-res-degrees their-grid))
           ;; ne corner
-          (+ (mh-lon-res-degrees their-mh)
-            (mh-lon-sw-corner their-mh))
-          (+ (mh-lat-sw-corner their-mh)
-            (mh-lat-res-degrees their-mh))
+          (+ (mh-lon-res-degrees their-grid)
+            (mh-lon-sw-corner their-grid))
+          (+ (mh-lat-sw-corner their-grid)
+            (mh-lat-res-degrees their-grid))
           ;; se corner
-          (+ (mh-lon-res-degrees their-mh)
-            (mh-lon-sw-corner their-mh))
-          (mh-lat-sw-corner their-mh)
+          (+ (mh-lon-res-degrees their-grid)
+            (mh-lon-sw-corner their-grid))
+          (mh-lat-sw-corner their-grid)
           ;; sw corner
-          (mh-lon-sw-corner their-mh)
-          (mh-lat-sw-corner their-mh))))))
+          (mh-lon-sw-corner their-grid)
+          (mh-lat-sw-corner their-grid))))))
 
 (define (kml-footer-write port)
   (format port "\n</Document>\n</kml>\n"))
@@ -141,19 +146,18 @@ gridsquare: ~A
     ((equal? key "qth")
       (qso-qth-set! record value))
     ((equal? key "gridsquare")
-      (qso-gridsquare-set! record value))))
+      (qso-their-grid-set! record value))
+    ((equal? key "my_gridsquare")
+      (qso-my-grid-set! record value))))
 
 (define processed-callsigns '())
 
-(define (process-adi-record kml-port my-gridsquare record)
+(define (process-adi-record kml-port record)
   (let ((callsign (qso-callsign record)))
     (if (not (member callsign processed-callsigns))
       (begin
         (when (not (null?
-                    (kml-record-write
-                      kml-port
-                      my-gridsquare
-                      record)))
+                    (kml-record-write kml-port record)))
           (set! processed-callsigns
             (cons callsign processed-callsigns)))))))
 
@@ -161,58 +165,48 @@ gridsquare: ~A
   (format #t "Processed ~A unique callsigns with maidenhead data\n"
     (length processed-callsigns)))
 
-(define (adi2kml my-gridsquare adi-filename kml-filename)
-  (let ((my-mh (make-maidenhead my-gridsquare))
-        (kml-port (open-output-file kml-filename))
+(define (adi2kml adi-filename kml-filename)
+  (let ((kml-port (open-output-file kml-filename))
         (adi-kv-regex (irregex "^<(.*):[0-9:]+>(.*)$")))
-    (if (null? my-mh)
-      (begin
-        (format #t "Invalid maidenhead: ~A\n" my-gridsquare)
-        (final-output))
-      (begin
-        ; setup float number print precision
-        (flonum-print-precision 5)
+    ; setup float number print precision
+    (flonum-print-precision 5)
 
-        ; header
-        (kml-header-write kml-port)
-        ; process adi records
-        (call-with-input-file
-          adi-filename
-          (lambda (port)
-            (let ((last-record '#f))
-              (do
-                ((record (make-empty-qso)))
-                ((eq? #t last-record))
+    ; header
+    (kml-header-write kml-port)
+    ; process adi records
+    (call-with-input-file
+      adi-filename
+      (lambda (port)
+        (let ((last-record '#f))
+          (do
+            ((record (make-empty-qso)))
+            ((eq? #t last-record))
 
-                (do
-                  ((line (read-line port) (read-line port)))
-                  ((eq? #!eof line) (set! last-record #t))
+            (do
+              ((line (read-line port) (read-line port)))
+              ((eq? #!eof line) (set! last-record #t))
 
-                  (let ((kv (irregex-match adi-kv-regex line)))
-                    (if kv
-                      (update-adi-record record
-                        (irregex-match-substring kv 1)
-                        (irregex-match-substring kv 2))
-                      (when (substring-index "<eor>" line)
-                        (process-adi-record
-                          kml-port
-                          my-mh
-                          record)
-                        (set! record (make-empty-qso))))))))))
-        ; footer
-        (kml-footer-write kml-port)
-        (final-output)))))
+              (let ((kv (irregex-match adi-kv-regex line)))
+                (if kv
+                  (update-adi-record record
+                    (irregex-match-substring kv 1)
+                    (irregex-match-substring kv 2))
+                  (when (substring-index "<eor>" line)
+                    (process-adi-record kml-port record)
+                    (set! record (make-empty-qso))))))))))
+    ; footer
+    (kml-footer-write kml-port)
+    (final-output)))
 
 (define (adi2kml-args args)
-  (if (= 3 (length args))
+  (if (= 2 (length args))
     (adi2kml (car args)
-      (cadr args)
-      (caddr args))
+      (cadr args))
     (begin
       (format #t "\nERROR invalid arguments: ~A\n\n" args)
       (display "adi2kml reads ADIF files and writes KML files\n\n")
-      (display "  Usage: ./adi2kml.scm <your maidenhead grid> <adi file> <kml file>\n")
-      (display "Example: ./ad2kml.scm DM45NM mylog.adi myworld.kml\n\n")
+      (display "  Usage: ./adi2kml.scm <adi file> <kml file>\n")
+      (display "Example: ./ad2kml.scm mylog.adi myworld.kml\n\n")
       #f)))
 
 (adi2kml-args (command-line-arguments))

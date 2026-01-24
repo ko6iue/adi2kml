@@ -43,7 +43,7 @@ You can run `adi2kml` two ways: scheme script or compiled C binary.
 To run the script, use a commandline like the following:
 
 ```
-$ ./adi2kml.scm JK42GO input.adi output.kml
+$ ./adi2kml.scm input.adi output.kml
 ```
 
 assuming your QTH maidenhead grid is `JK42GO`, your ADIF file is named `input.adi`, and you want to export all the QSOs into `output.kml`.
@@ -64,7 +64,7 @@ $ csc -static -o adi2kml adi2kml.scm
 You use the binary, just like the script, running e.g.
 
 ```
-$ ./adi2kml JK42GO input.adi output.kml
+$ ./adi2kml input.adi output.kml
 ```
 
 
@@ -73,7 +73,7 @@ $ ./adi2kml JK42GO input.adi output.kml
 The scheme script is able to process about 4600 QSOs per second.
 
 ```
-time ./adi2kml.scm JK42GO sample.adi sample.kml
+time ./adi2kml.scm sample.adi sample.kml
 Processed 1281 unique callsigns with maidenhead data
 
 real    0m0.274s
@@ -84,7 +84,7 @@ sys     0m0.010s
 The compiled binary is able to process about 5900 QSOs per second (a 28% improvement).
 
 ```
-time ./adi2kml JK42GO sample.adi sample.kml
+time ./adi2kml sample.adi sample.kml
 Processed 1281 unique callsigns with maidenhead data
 
 real    0m0.217s
@@ -100,9 +100,7 @@ Both the script and binary version of the program use very little memory. The `a
 
 The `adi2kml.scm` script loads the `maidenhead.scm` file in order to have methods for converting maidenhead coordinates to GPS and calculating bearing and distance between two maidenhead locators.
 
-All GPS coordinates, bearing, and distances are calculated and do not rely on that information being present in the ADIF file.
-
-The maidenhead grid square you provide on the `adi2kml` commandline is used in these calculations.
+All GPS coordinates, bearing, and distances are calculated and do not rely on that information being present in the ADIF file aside from the keys `my_gridsquare` and `gridsquare`.
 
 ## Limitations and TODOs
 
