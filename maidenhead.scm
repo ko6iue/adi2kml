@@ -32,8 +32,8 @@
 
 (import
   (chicken format)
-  abnf
-  lexgen)
+  (chicken irregex)
+  (chicken string))
 
 (define-record
   mh
@@ -63,41 +63,26 @@ lon-res-degrees: ~A
     (mh-lat-center mh)
     (mh-lon-center mh)))
 
-(define (make-maidenhead-lexer-closure)
-  ;; closure to capture ABNF definitions for
-  ;; a maidenhead designation
-  (let* ((field-chars (repetition-n 2 (alternatives
-                                       (range #\A #\R)
-                                       (range #\a #\r))))
-         (square-chars (repetition-n 2 decimal))
-         (subsquare-chars (repetition-n 2 (alternatives
-                                           (range #\A #\X)
-                                           (range #\a #\x))))
-         (extended-chars square-chars)
-         (between-wsp (lambda (p)
-                       (concatenation
-                         (drop-consumed (optional-sequence wsp))
-                         p
-                         (drop-consumed (optional-sequence wsp)))))
-         (maidenhead (between-wsp
-                      (concatenation
-                        field-chars
-                        (optional-sequence
-                          (concatenation
-                            square-chars
-                            (optional-sequence
-                              (concatenation
-                                subsquare-chars
-                                (optional-sequence
-                                  extended-chars)))))))))
+(define (maidenhead-parser-closure)
+  (let* ((fs-regex "^([a-rA-R]{2})([0-9]{2})")
+         (mh-regex (string-append fs-regex "?$|" fs-regex
+                    "([a-xA-X]{2})([0-9]{2})?$"))
+         (regex-comp (irregex mh-regex)))
     (lambda (text)
-      (let ((parsed (lex maidenhead identity text)))
-        (cond
-          ((null? (cadr parsed)) (car parsed))
-          (else '()))))))
+      (let* ((nosp (string-translate text " "))
+             (match (irregex-match regex-comp nosp)))
+        (if (not match) '()
+          (let ((result '()))
+            (do ((i 1 (+ i 1)))
+              ((> i (irregex-match-num-submatches match))
+                (reverse result))
+              (let ((el (irregex-match-substring match i)))
+                (when el
+                  (set! result (cons (car (string->list el)) result))
+                  (set! result (cons (cadr (string->list el)) result)))))))))))
 
 (define (make-maidenhead-closure)
-  (let* ((mh-lexer (make-maidenhead-lexer-closure))
+  (let* ((mh-lexer (maidenhead-parser-closure))
          (ci char->integer)
          (char-to-step
            (lambda (c)

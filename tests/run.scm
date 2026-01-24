@@ -4,7 +4,7 @@
 
 (load "../maidenhead.scm")
 
-(define lexer-tests
+(define parser-tests
   '((() "")
     (() " ")
     (() "YY00")
@@ -18,12 +18,12 @@
     ((#\J #\K #\4 #\2 #\X #\O) "JK42XO")
     ((#\L #\O #\9 #\9 #\L #\X #\5 #\5) "LO99LX55")))
 
-(test-group "lexer"
-  (let ((lexer (make-maidenhead-lexer-closure)))
+(test-group "parser"
+  (let ((parser (maidenhead-parser-closure)))
     (for-each
       (lambda(el)
-        (test (sprintf "\"~A\"" (cadr el)) (car el) (lexer (cadr el))))
-      lexer-tests)))
+        (test (sprintf "\"~A\"" (cadr el)) (car el) (parser (cadr el))))
+      parser-tests)))
 
 (test '() (make-maidenhead "ZZ42"))
 
