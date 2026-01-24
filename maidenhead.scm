@@ -33,8 +33,7 @@
 (import
   (chicken format)
   abnf
-  lexgen
-  srfi-1)
+  lexgen)
 
 (define-record
   mh
@@ -137,15 +136,16 @@ lon-res-degrees: ~A
                       (mh-lon-res-degrees mh-record)))
                   ; return completed record
                   mh-record)
-                (let ((lonlat (take steps 2))
+                (let ((lon (car steps))
+                      (lat (cadr steps))
                       (res (list-ref stepsize-degrees i)))
                   (mh-lat-sw-corner-set! mh-record
                     (+ (mh-lat-sw-corner mh-record)
-                      (*(cadr lonlat) (car res))))
+                      (* lat (car res))))
                   (mh-lon-sw-corner-set! mh-record
                     (+ (mh-lon-sw-corner mh-record)
-                      (*(car lonlat) (cadr res))))
-                  (loop (+ i 1) (drop steps 2)))))
+                      (* lon (cadr res))))
+                  (loop (+ i 1) (cddr steps)))))
             mh-record))))))
 
 (define make-maidenhead (make-maidenhead-closure))

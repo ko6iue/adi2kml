@@ -29,14 +29,13 @@
 
 (load "maidenhead.scm")
 
-(import (scheme)
+(import
+  (scheme)
   (chicken irregex)
+  (chicken format)
   (chicken io)
   (chicken process-context)
-  (chicken string)
-  (sxml-serializer)
-  (srfi-1)
-  (srfi-48))
+  (chicken string))
 
 (define-record
   qso
@@ -69,76 +68,61 @@ gridsquare: ~A
 
 (define (generate-kml-description my-mh their-mh adi-record)
   (if (not (and my-mh their-mh)) '()
-    (format #f
+    (sprintf
       "<h1>~A</h1>
 <a href=\"https://www.qrz.com/db/~A\">QRZ Page</a><br/>
 <b>QTH</b>: ~A<br/>
 <b>Grid</b>: ~A<br/>
 <b>Country</b>: ~A<br/>
-<b>Distance</b>: ~0,2F km<br/>
-<b>Bearing</b>: ~0,2F&deg;"
+<b>Distance</b>: ~A km<br/>
+<b>Bearing</b>: ~A&deg;"
       (qso-name adi-record)
       (qso-callsign adi-record)
       (qso-qth adi-record)
       (qso-gridsquare adi-record)
       (qso-country adi-record)
-      (maidenhead-distance-km my-mh their-mh)
-      (maidenhead-bearing-degrees my-mh their-mh))))
+      ; TODO: Better formatting for float values: ~F support?
+      (round (maidenhead-distance-km my-mh their-mh))
+      (round (maidenhead-bearing-degrees my-mh their-mh)))))
 
 (define (kml-record-write port my-mh adi-record)
   (let ((their-mh (make-maidenhead
-                   (qso-gridsquare adi-record))))
+                   (qso-gridsquare adi-record)))
+        (cdata-open "<![CDATA[")
+        (cdata-close "]]>"))
     (if (null? their-mh) '()
       (begin
-        ;; write center coordinate of QSO
-        (serialize-sxml
-          `(Placemark
-            (name
-             ,(qso-callsign adi-record))
-            (description
-             ,(generate-kml-description
-               my-mh
-               their-mh
-               adi-record))
-            (Point
-             (coordinates
-              ,(format #f
-                "~A,~A,0"
-                (mh-lon-center their-mh)
-                (mh-lat-center their-mh)))))
-          output:
-          port
-          cdata-section-elements:
-          '(description))
-        ;; write boundaries of maidenhead for QSO
-        (serialize-sxml
-          `(Placemark
-            (name ,(string-append (qso-callsign adi-record) " MH"))
-            (LineString
-             (tessellate 1)
-             (coordinates
-              ,(format #f "~A,~A,0\n~A,~A,0\n~A,~A,0\n~A,~A,0\n~A,~A,0\n"
-                ;; sw corner
-                (mh-lon-sw-corner their-mh)
-                (mh-lat-sw-corner their-mh)
-                ;; nw corner
-                (mh-lon-sw-corner their-mh)
-                (+ (mh-lat-sw-corner their-mh)
-                  (mh-lat-res-degrees their-mh))
-                ;; ne corner
-                (+ (mh-lon-res-degrees their-mh)
-                  (mh-lon-sw-corner their-mh))
-                (+ (mh-lat-sw-corner their-mh)
-                  (mh-lat-res-degrees their-mh))
-                ;; se corner
-                (+ (mh-lon-res-degrees their-mh)
-                  (mh-lon-sw-corner their-mh))
-                (mh-lat-sw-corner their-mh)
-                ;; sw corner
-                (mh-lon-sw-corner their-mh)
-                (mh-lat-sw-corner their-mh)))))
-          output:
-          port)))))
+        (format port "<Placemark><name>~A</name><description>~A~A~A</description>
+<Point><coordinates>~A,~A,0</coordinates></Point></Placemark>
+<Placemark><name>~A</name><LineString><tessellate>1</tessellate>
+<coordinates>~A,~A,0\n~A,~A,0\n~A,~A,0\n~A,~A,0\n~A,~A,0</coordinates>
+</LineString></Placemark>"
+          (qso-callsign adi-record)
+          cdata-open
+          (generate-kml-description my-mh their-mh adi-record)
+          cdata-close
+          (mh-lon-center their-mh)
+          (mh-lat-center their-mh)
+          (string-append (qso-callsign adi-record) " maidenhead box")
+          ;; sw corner
+          (mh-lon-sw-corner their-mh)
+          (mh-lat-sw-corner their-mh)
+          ;; nw corner
+          (mh-lon-sw-corner their-mh)
+          (+ (mh-lat-sw-corner their-mh)
+            (mh-lat-res-degrees their-mh))
+          ;; ne corner
+          (+ (mh-lon-res-degrees their-mh)
+            (mh-lon-sw-corner their-mh))
+          (+ (mh-lat-sw-corner their-mh)
+            (mh-lat-res-degrees their-mh))
+          ;; se corner
+          (+ (mh-lon-res-degrees their-mh)
+            (mh-lon-sw-corner their-mh))
+          (mh-lat-sw-corner their-mh)
+          ;; sw corner
+          (mh-lon-sw-corner their-mh)
+          (mh-lat-sw-corner their-mh))))))
 
 (define (kml-footer-write port)
   (format port "\n</Document>\n</kml>\n"))
@@ -215,9 +199,9 @@ gridsquare: ~A
 
 (define (adi2kml-args args)
   (if (= 3 (length args))
-    (adi2kml (first args)
-      (second args)
-      (third args))
+    (adi2kml (car args)
+      (cadr args)
+      (caddr args))
     (begin
       (format #t "\nERROR invalid arguments: ~A\n\n" args)
       (display "adi2kml reads ADIF files and writes KML files\n\n")
