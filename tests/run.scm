@@ -15,8 +15,8 @@
     (() "SA00")
     ((#\Q #\R) "QR")
     ((#\A #\B #\1 #\2) " AB12 ")
-    ((#\J #\K #\4 #\2 #\X #\O) "JK42XO")
-    ((#\L #\O #\9 #\9 #\L #\X #\5 #\5) "LO99LX55")))
+    ((#\J #\K #\4 #\2 #\X #\O) " JK42XO")
+    ((#\L #\O #\9 #\9 #\L #\X #\5 #\5) "LO99LX55 ")))
 
 (test-group "parser"
   (let ((parser (maidenhead-parser-closure)))
