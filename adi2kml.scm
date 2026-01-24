@@ -28,9 +28,12 @@
 ; OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (load "maidenhead.scm")
-
+;
+; IMPORTS
+;
 (import
   (scheme)
+  (chicken base)
   (chicken irregex)
   (chicken format)
   (chicken io)
@@ -167,8 +170,8 @@ gridsquare: ~A
         (format #t "Invalid maidenhead: ~A\n" my-gridsquare)
         (final-output))
       (begin
-	; setup float number print precision
-	(flonum-print-precision 5)
+        ; setup float number print precision
+        (flonum-print-precision 5)
 
         ; header
         (kml-header-write kml-port)

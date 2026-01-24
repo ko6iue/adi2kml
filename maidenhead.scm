@@ -30,7 +30,12 @@
 ; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+;
+; IMPORTS
+;
 (import
+  (scheme)
+  (chicken base)
   (chicken format)
   (chicken irregex)
   (chicken string))
