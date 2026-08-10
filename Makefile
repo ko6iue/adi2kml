@@ -36,3 +36,4 @@ pretty-js: html/assets/filehelper.js html/*.html html/assets/*.js
 
 clean:
 	rm adiftool *.c~ *.h~ html/assets/*.wasm html/assets/adiftool.js 2>/dev/null || /usr/bin/env true
+	rm test-latlon test-counter test-maidenhead
